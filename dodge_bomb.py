@@ -11,17 +11,17 @@ DELTA = {  # 移動量辞書
     pg.K_LEFT : (-5, 0),
     pg.K_RIGHT : (+5, 0),
 }
-ROTATE = {  # 回転辞書
-    ( 0, -5):270,
-    (-5, -5):315,
-    (-5,  0):0,
-    (-5, +5):45,
-    ( 0, +5):90,
-    (+5, +5):135,
-    (+5,  0):180,
-    (+5, -5):225,
-    ( 0,  0):0,
-}
+# ROTATE = {  # 回転辞書
+#     ( 0, -5):270,
+#     (-5, -5):315,
+#     (-5,  0):0,
+#     (-5, +5):45,
+#     ( 0, +5):90,
+#     (+5, +5):135,
+#     (+5,  0):180,
+#     (+5, -5):225,
+#     ( 0,  0):0,
+# }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -136,9 +136,8 @@ def main():
         avy = vy*bomb_accs[min(tmr//500, 9)]
         bomb_img = bomb_imgs[min(tmr//500, 9)]
 
-        vx,vy = avx, avy
-
-        bomb_rct.move_ip(vx, vy)  # 爆弾画面内
+        # vx,vy = avx, avy
+        bomb_rct.move_ip(vx+avx, vy+avy)  # 爆弾画面内
         yoko, tate = check_bound(bomb_rct)
         if not yoko:
             vx *= -1
