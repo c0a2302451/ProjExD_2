@@ -60,18 +60,21 @@ def bb_big(): #拡大爆弾Surface
     a = []
     b = []
     for r in range(1, 11):
-
         bomb_img = pg.Surface((20*r, 20*r))
         pg.draw.circle(bomb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bomb_img.set_colorkey((0, 0, 0))
         a.append(r)
         b.append(bomb_img)
     return a,b
         
 
-def gameover(screen, kk_rct):  # GameOver画面
-    font = pg.font.Font(None, 100)
-    text = font.render("Game Over", True, (255, 255, 255))
-    text_rct = text.get_rect(center=(WIDTH/2,HEIGHT/2))
+def gameover(screen:pg.display, kk_rct:pg.rect):  # GameOver画面
+    """
+    引数
+    """
+    font = pg.font.Font(None, 100)  #font
+    text = font.render("Game Over", True, (255, 255, 255))  # テキストサイズ
+    text_rct = text.get_rect(center=(WIDTH/2,HEIGHT/2))  # テキスト位置
     black = pg.Surface((WIDTH,HEIGHT))
     black.set_alpha(128)
     black.fill((0, 0, 0))
@@ -98,8 +101,7 @@ def main():
     kk_rct.center = 900, 400
     bomb_img = pg.Surface((20, 20))  # 爆弾
     pg.draw.circle(bomb_img, (255, 0, 0), (10, 10), 10)
-    # bomb_imgs = bb_big()[1]
-    # bomb_accs = bb_big()[0]
+    bomb_accs, bomb_imgs = bb_big()
     bomb_img.set_colorkey((0, 0, 0))
     bomb_rct = bomb_img.get_rect()
     bomb_rct.center = random.randint(0, 1200), random.randint(0, 700)
@@ -130,11 +132,11 @@ def main():
 
         screen.blit(kk_img, kk_rct)
 
-        # avx = vx*bomb_accs[min(tmr//500, 9)]
-        # avy = vy*bomb_accs[min(tmr//500, 9)]
-        # bomb_img = bomb_imgs[min(tmr//500, 9)]
+        avx = vx*bomb_accs[min(tmr//500, 9)]
+        avy = vy*bomb_accs[min(tmr//500, 9)]
+        bomb_img = bomb_imgs[min(tmr//500, 9)]
 
-        # vx,vy = avx, avy
+        vx,vy = avx, avy
 
         bomb_rct.move_ip(vx, vy)  # 爆弾画面内
         yoko, tate = check_bound(bomb_rct)
