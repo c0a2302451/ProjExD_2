@@ -9,7 +9,18 @@ DELTA = {  # 移動量辞書
     pg.K_UP : (0, -5),
     pg.K_DOWN : (0, +5),
     pg.K_LEFT : (-5, 0),
-    pg.K_RIGHT : (+5, 0)
+    pg.K_RIGHT : (+5, 0),
+}
+ROTATE = {  # 回転辞書
+    ( 0, -5):270,
+    (-5, -5):315,
+    (-5,  0):0,
+    (-5, +5):45,
+    ( 0, +5):90,
+    (+5, +5):135,
+    (+5,  0):180,
+    (+5, -5):225,
+    ( 0,  0):0,
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -27,12 +38,27 @@ def check_bound(rct:pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
-
+def push_rotate():
+    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 2.0)
+    kk_img01 = pg.transform.flip(kk_img, True, False) 
+    return {  # 回転辞書
+        ( 0, -5):pg.transform.rotozoom(kk_img01, 90, 1.0),
+        (-5, -5):pg.transform.rotozoom(kk_img, -45, 1.0),
+        (-5,  0):kk_img,
+        (-5, +5):pg.transform.rotozoom(kk_img, 45, 1.0),
+        ( 0, +5):pg.transform.rotozoom(kk_img01, -90, 1.0),
+        (+5, +5):pg.transform.rotozoom(kk_img01, -45, 1.0),
+        (+5,  0):kk_img01,
+        (+5, -5):pg.transform.rotozoom(kk_img01, 45, 1.0),
+        ( 0,  0):kk_img,
+}
+        
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
-    bg_img = pg.image.load("fig/pg_bg.jpg")    
-    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 2.0) # 回転率,大きさ倍率
+    bg_img = pg.image.load("fig/pg_bg.jpg") 
+    kk_imgs = push_rotate() # 回転率,大きさ倍率
+    kk_img = kk_imgs[(0,0)]   
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
     bomb_img = pg.Surface((20, 20))  # 爆弾
@@ -58,18 +84,22 @@ def main():
             if key_lst[k]:
                 sum_mv[0] += v[0]
                 sum_mv[1] += v[1]
-        kk_rct.move_ip(sum_mv)  # こうかとん
+
+        kk_img = kk_imgs[tuple(sum_mv)]
+
+        kk_rct.move_ip(sum_mv)  # こうかとん画面内
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
+
         screen.blit(kk_img, kk_rct)
 
-        bomb_rct.move_ip(vx, vy)  # 爆弾
+        bomb_rct.move_ip(vx, vy)  # 爆弾画面内
         yoko, tate = check_bound(bomb_rct)
         if not yoko:
             vx *= -1
         if not tate:
             vy *= -1
-
+        
         screen.blit(bomb_img, bomb_rct)
         pg.display.update()
         tmr += 1
