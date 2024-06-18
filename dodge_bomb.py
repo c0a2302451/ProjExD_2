@@ -68,13 +68,24 @@ def bb_big(): #拡大爆弾Surface
     return a,b
         
 
-def gameover(screen, kk_rct):
+def gameover(screen, kk_rct):  # GameOver画面
     font = pg.font.Font(None, 100)
-    text = font.render("Game over", True, (255, 0, 0))
+    text = font.render("Game Over", True, (255, 255, 255))
     text_rct = text.get_rect(center=(WIDTH/2,HEIGHT/2))
     black = pg.Surface((WIDTH,HEIGHT))
     black.set_alpha(128)
-    black.fill(0, 0, 0)
+    black.fill((0, 0, 0))
+    cry_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 2.0)
+    cry_rct = cry_img.get_rect(center=kk_rct.center)
+    cry_img2 = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 2.0)
+    cry_rct2 = cry_img.get_rect(center=(WIDTH-kk_rct[0],HEIGHT-kk_rct[1]))
+
+    screen.blit(black,(0,0))
+    screen.blit(cry_img,cry_rct)
+    screen.blit(cry_img2,cry_rct2)
+    screen.blit(text,text_rct)
+    pg.display.update()
+    pg.time.wait(5000)
 
 
 def main():
