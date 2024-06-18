@@ -155,6 +155,5 @@ def main():
 if __name__ == "__main__":
     pg.init()
     main()
-    print(bb_big())
     pg.quit()
     sys.exit()
