@@ -4,7 +4,7 @@ import sys
 import pygame as pg
 
 
-WIDTH, HEIGHT = 1600, 900
+WIDTH, HEIGHT = 1200, 700
 DELTA = {  # 移動量辞書
     pg.K_UP : (0, -5),
     pg.K_DOWN : (0, +5),
@@ -12,6 +12,20 @@ DELTA = {  # 移動量辞書
     pg.K_RIGHT : (+5, 0)
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+
+def check_bound(rct:pg.Rect) -> tuple[bool, bool]:
+    """
+    引数:こうかとんRectか爆弾Rect
+    戻り値:タプル(横方向判定結果,縦方向判定結果)
+    画面内ならTrue,画面外ならFalse
+    """
+    yoko, tate = True, True
+    if rct.left < 0 or WIDTH < rct.right:
+        yoko = False
+    if rct.top < 0 or HEIGHT < rct.bottom:
+        tate = False
+    return yoko, tate
 
 
 def main():
@@ -25,7 +39,7 @@ def main():
     bomb_img.set_colorkey((0, 0, 0))
     pg.draw.circle(bomb_img, (255, 0, 0), (10, 10), 10)
     bomb_rct = bomb_img.get_rect()
-    bomb_rct.center = random.randint(0, 1600), random.randint(0, 900)
+    bomb_rct.center = random.randint(0, 1200), random.randint(0, 700)
     vx, vy = +5, +5  # 横、縦の速さ
 
     clock = pg.time.Clock()
@@ -42,9 +56,18 @@ def main():
             if key_lst[k]:
                 sum_mv[0] += v[0]
                 sum_mv[1] += v[1]
-        kk_rct.move_ip(sum_mv)
+        kk_rct.move_ip(sum_mv)  # こうかとん
+        if check_bound(kk_rct) != (True, True):
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         screen.blit(kk_img, kk_rct)
-        bomb_rct.move_ip(vx, vy)
+
+        bomb_rct.move_ip(vx, vy)  # 爆弾
+        yoko, tate = check_bound(bomb_rct)
+        if not yoko:
+            vx *= -1
+        if not tate:
+            vy *= -1
+
         screen.blit(bomb_img, bomb_rct)
         pg.display.update()
         tmr += 1
