@@ -70,7 +70,9 @@ def bb_big(): #拡大爆弾Surface
 
 def gameover(screen:pg.display, kk_rct:pg.rect):  # GameOver画面
     """
-    引数
+    引数:screen,こうかとんのRect
+    戻り値:無し
+    終了画面
     """
     font = pg.font.Font(None, 100)  #font
     text = font.render("Game Over", True, (255, 255, 255))  # テキストサイズ
